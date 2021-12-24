@@ -6,10 +6,11 @@
 	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	   http://www.zr.com/schema/user http://www.zr.com/schema/user.xsd">
 
-<!--	<bean name="person" class="com.zr.Person">-->
-<!--		<property name="id" value="123"/>-->
-<!--		<property name="name" value="paopao"/>-->
-<!--	</bean>-->
+	<bean name="person" class="com.zr.Person">
+		<property name="id" value="123"/>
+		<property name="name" value="paopao"/>
+	</bean>
 
 		<zr:user id="firstMyTag" username="123" email="zr@123" />
+
 </beans>

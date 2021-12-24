@@ -139,6 +139,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);
+		// 设置配置文件地址，并替换placeholder-${}为指定的属性值
 		setConfigLocations(configLocations);
 		if (refresh) {
 			refresh();

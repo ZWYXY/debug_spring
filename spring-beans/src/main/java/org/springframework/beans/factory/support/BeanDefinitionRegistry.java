@@ -30,6 +30,9 @@ import org.springframework.core.AliasRegistry;
  * <i>registration</i> of bean definitions. The standard BeanFactory interfaces
  * only cover access to a <i>fully configured factory instance</i>.
  *
+ * 这个类其实就是实现对beanDefinition的增删改查的，它的父类是BeanFactory，
+ * 但是父类没有提供做BeanDefinition的相关操作规范，标准的BeanFactory仅仅包含了获取完全配置好的factory实例的途径
+ *
  * <p>Spring's bean definition readers expect to work on an implementation of this
  * interface. Known implementors within the Spring core are DefaultListableBeanFactory
  * and GenericApplicationContext.

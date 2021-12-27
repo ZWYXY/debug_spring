@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:zr="http://www.zr.com/schema/user"
+	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="
 	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	   http://www.zr.com/schema/user http://www.zr.com/schema/user.xsd">
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<context:component-scan base-package="com.zr.*"/>
 
 	<bean name="person" class="com.zr.Person">
 		<property name="id" value="123"/>
 		<property name="name" value="paopao"/>
 	</bean>
-
-		<zr:user id="firstMyTag" username="123" email="zr@123" />
 
 </beans>

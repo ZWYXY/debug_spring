@@ -21,6 +21,8 @@ import java.util.Locale;
 import org.springframework.lang.Nullable;
 
 /**
+ * 此接口提供了处理消息的策略，包含了信息的国际化和参数信息的替换
+ *
  * Strategy interface for resolving messages, with support for the parameterization
  * and internationalization of such messages.
  *
@@ -47,7 +49,7 @@ public interface MessageSource {
 	 * @param args an array of arguments that will be filled in for params within
 	 * the message (params look like "{0}", "{1,date}", "{2,time}" within a message),
 	 * or {@code null} if none
-	 * @param defaultMessage a default message to return if the lookup fails
+	 * @param defaultMessage `a default message to return if the lookup f`ails
 	 * @param locale the locale in which to do the lookup
 	 * @return the resolved message if the lookup was successful, otherwise
 	 * the default message passed as a parameter (which may be {@code null})

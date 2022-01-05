@@ -193,6 +193,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private boolean enforceDestroyMethod = true;
 
+	/**
+	 * 是否是应用程序本身定义的，而不是用户定义的，创建aop的时候值才是true
+	 */
 	private boolean synthetic = false;
 
 	/**

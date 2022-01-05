@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
+	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	   ">
+	<bean id="person5" class="com.zr.factorymethod.PersonStaticFactory" factory-method="getPerson">
+		<constructor-arg value="lisi"/>
+	</bean>
+
+	<bean id="personInstanceFactory" class="com.zr.factorymethod.PersonInstanceFactory"/>
+	<!--
+	factory-bean:指定使用哪个工厂实例
+	factory-method:指定使用哪个工厂实例的方法
+	-->
+	<bean id="person6" class="com.zr.factorymethod.Person" factory-bean="personInstanceFactory" factory-method="getPerson">
+		<constructor-arg value="wangwu"/>
+	</bean>
+</beans>

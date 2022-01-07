@@ -1208,20 +1208,28 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 在使用构造器创建实例后，Spring会将解析过后确定下来的构造器或工厂方法保存在缓存中，避免再次创建相同的bean时再次解析
 		// 标记下，防止重复创建同一个bean
 		boolean resolved = false;
+		// 是否需要自动装备
 		boolean autowireNecessary = false;
 		if (args == null) {
 			synchronized (mbd.constructorArgumentLock) {
+				// 因为一个类可能有多个构造函数，所以需要根据配置文件中配置的参数或传入的参数来确定最终调用的构造函数
+				// 因为判断过程会比较，所以spring将会解析、确定好的构造函数缓存到BeanDefinition中的resolvedConstructorOrFactoryMethod字段中
+				// 下次创建相同时直接从RootBeanDefinition中的属性resolvedConstructorOrFactoryMethod缓存的值获取，避免再次解析
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
 					resolved = true;
 					autowireNecessary = mbd.constructorArgumentsResolved;
 				}
 			}
 		}
+		// 有构造参数的或者工厂方法
 		if (resolved) {
+			// 构造器有参数
 			if (autowireNecessary) {
+				// 构造函数自动注入
 				return autowireConstructor(beanName, mbd, null, null);
 			}
 			else {
+				// 使用默认构造函数构造
 				return instantiateBean(beanName, mbd);
 			}
 		}

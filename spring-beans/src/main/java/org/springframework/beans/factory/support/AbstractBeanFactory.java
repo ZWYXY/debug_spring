@@ -1829,7 +1829,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// 将存储xml配置文件的genericBeanDefinition转换为RootBeanDefinition，如果指定BeanName是子Bean的话，同时会合并父类的相关属性
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
-			// 判断当前bean是否是用户定义的，而不是应用程序本身定义
+			// 判断当前bean是否是用户定义的，而不是Spring本身定义
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
 			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
 		}

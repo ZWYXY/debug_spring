@@ -146,7 +146,9 @@ public class InitDestroyAnnotationBeanPostProcessor
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+		// 调用方法获取生命周期元数据并保存
 		LifecycleMetadata metadata = findLifecycleMetadata(beanType);
+		// 验证相关方法
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -220,23 +222,30 @@ public class InitDestroyAnnotationBeanPostProcessor
 		if (!AnnotationUtils.isCandidateClass(clazz, Arrays.asList(this.initAnnotationType, this.destroyAnnotationType))) {
 			return this.emptyLifecycleMetadata;
 		}
-
+		// 实例化后的回调方法（@PostConstruct）
 		List<LifecycleElement> initMethods = new ArrayList<>();
+		// 销毁前的回调方法（@PreDestroy）
 		List<LifecycleElement> destroyMethods = new ArrayList<>();
+		// 获取正在处理的目标类
 		Class<?> targetClass = clazz;
 
 		do {
+			// 保存每一轮循环搜索到的方法
 			final List<LifecycleElement> currInitMethods = new ArrayList<>();
 			final List<LifecycleElement> currDestroyMethods = new ArrayList<>();
-
+			// 反射获取当前类中所有方法并依次对其调用第二个参数的lambda表达式
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
+				// 当前方法的注解中包含initAnnotationType的注解时（@PostConstruct）
 				if (this.initAnnotationType != null && method.isAnnotationPresent(this.initAnnotationType)) {
+					// 如果有，把它封装成LifecycleElement对象，存储起来
 					LifecycleElement element = new LifecycleElement(method);
+					// 将创建好的元素添加到集合中
 					currInitMethods.add(element);
 					if (logger.isTraceEnabled()) {
 						logger.trace("Found init method on class [" + clazz.getName() + "]: " + method);
 					}
 				}
+				// 当前方法的注解中包含destroyAnnotationType注解（@PreDestroy）
 				if (this.destroyAnnotationType != null && method.isAnnotationPresent(this.destroyAnnotationType)) {
 					currDestroyMethods.add(new LifecycleElement(method));
 					if (logger.isTraceEnabled()) {

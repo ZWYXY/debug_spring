@@ -1,9 +1,12 @@
 package com.zr;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @author zhourui
  * @date 2021/12/23 14:57
  */
+@Component
 public class Person {
 
 	private Long id;

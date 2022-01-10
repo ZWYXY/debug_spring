@@ -183,48 +183,71 @@ class ConstructorResolver {
 			}
 
 			// Need to resolve the constructor.
+			// 自动装配标识，有一下一种情况成立则为true
+			// 1. 传进来构造函数，证明spring根据之前代码的判断，应该知道用哪个构造函数
+			// 2. BeanDefinition中设置为构造函数注入模型
 			boolean autowiring = (chosenCtors != null ||
 					mbd.getResolvedAutowireMode() == AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 			ConstructorArgumentValues resolvedValues = null;
 
+			// 构造函数的最小参数个数
 			int minNrOfArgs;
+			// 如果传入了参与构造函数实例化的参数值，那么参数的数量即为最小参数个数
 			if (explicitArgs != null) {
 				minNrOfArgs = explicitArgs.length;
 			}
 			else {
+				// 提取配置文件中配置的构造函数参数
 				ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
+				// 用于承载解析后的构造函数参数的值
 				resolvedValues = new ConstructorArgumentValues();
+				// 能解析到的参数个数
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
+			// 对候选的构造函数进行排序，先是访问权，后是参数个数
+			// public权限参数数量由多到少
 			AutowireUtils.sortConstructors(candidates);
+			// 定义一个差异变量，变量的大小决定着构造函数是否能被使用
 			int minTypeDiffWeight = Integer.MAX_VALUE;
+			// 不明确的构造函数集合，正常情况下差异值可能不相同
 			Set<Constructor<?>> ambiguousConstructors = null;
 			LinkedList<UnsatisfiedDependencyException> causes = null;
 
+			// 循环候选的构造函数
 			for (Constructor<?> candidate : candidates) {
+				// 获取参数个数
 				int parameterCount = candidate.getParameterCount();
-
+				// 如果已经找到选用的构造函数或者需要的参数个数小于当前的构造函数的参数个数则终止，前面已经经过了排序操作
 				if (constructorToUse != null && argsToUse != null && argsToUse.length > parameterCount) {
 					// Already found greedy constructor that can be satisfied ->
 					// do not look any further, there are only less greedy constructors left.
 					break;
 				}
+				// 如果本构造函数的参数列表数量小于要求的最小数量，则遍历下一个
 				if (parameterCount < minNrOfArgs) {
 					continue;
 				}
 
+				// 存放构造函数解析完成的参数列表
 				ArgumentsHolder argsHolder;
+				// 获取参数列表的类型
 				Class<?>[] paramTypes = candidate.getParameterTypes();
+				// 存在需要解析的构造函数
 				if (resolvedValues != null) {
 					try {
+						// 获取构造函数上的ConstructorProperties注解中的参数
 						String[] paramNames = ConstructorPropertiesChecker.evaluate(candidate, parameterCount);
+						// 如果没有上面的注解，则获取构造函数参数列表中属性的名称
 						if (paramNames == null) {
+							// 获取参数名称探索器
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
+								// 获取指定构造函数的参数名称
 								paramNames = pnd.getParameterNames(candidate);
 							}
 						}
+						// 根据名称和数据类型创建参数持有者
 						argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames,
 								getUserDeclaredConstructor(candidate), autowiring, candidates.length == 1);
 					}
@@ -240,24 +263,34 @@ class ConstructorResolver {
 						continue;
 					}
 				}
+				// 不存在构造函数参数列表需要解析的参数
 				else {
 					// Explicit arguments given -> arguments length must match exactly.
+					// 如果参数列表的数量与传入进来的参数数量不相等，继续遍历，否则构造参数列表封装对象
 					if (parameterCount != explicitArgs.length) {
 						continue;
 					}
+					// 构造函数没有参数的情况
 					argsHolder = new ArgumentsHolder(explicitArgs);
 				}
-
+				// 计算差异量，根据要参与构造函数的参数列表和本构造函数的参数列表进行计算
 				int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 						argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 				// Choose this constructor if it represents the closest match.
+				// 本次的构造函数差异值小于上一个构造函数，则进行构造函数更换
 				if (typeDiffWeight < minTypeDiffWeight) {
+					// 将确定使用的构造函数设置为本构造
 					constructorToUse = candidate;
+					// 更换使用的构造函数参数封装类
 					argsHolderToUse = argsHolder;
+					// 更换参与构造函数实例化的参数
 					argsToUse = argsHolder.arguments;
+					// 差异值更换
 					minTypeDiffWeight = typeDiffWeight;
+					// 不明确的构造函数列表清空
 					ambiguousConstructors = null;
 				}
+				// 差异值相等，则表明构造函数不正常，放入异常集合
 				else if (constructorToUse != null && typeDiffWeight == minTypeDiffWeight) {
 					if (ambiguousConstructors == null) {
 						ambiguousConstructors = new LinkedHashSet<>();

@@ -1,4 +1,4 @@
-package com.zr.annotation;
+package com.zr.useannotation;
 
 import org.springframework.stereotype.Component;
 
@@ -6,6 +6,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
+ * 测试 @PostConstruct 和 @PreDestroy
+ *
  * @author zhourui
  * @date 2022/1/10 15:35
  */

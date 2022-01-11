@@ -1,8 +1,6 @@
 package com.zr;
 
-import com.zr.annotation.DogeDoge;
-import com.zr.mytag.User;
-import org.springframework.context.ApplicationContext;
+import com.zr.useannotation.DogeDoge;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

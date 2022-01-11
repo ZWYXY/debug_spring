@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Person {
 
-	private Long id;
-	private String name;
+	private Long id = 1231L;
+	private String name = "paopao1";
 
 	public Long getId() {
 		return id;
@@ -26,5 +26,13 @@ public class Person {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Person{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				'}';
 	}
 }

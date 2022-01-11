@@ -1,4 +1,4 @@
-package com.zr.annotation;
+package com.zr.useannotation;
 
 import org.springframework.stereotype.Component;
 

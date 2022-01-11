@@ -1,4 +1,4 @@
-package com.zr.annotation;
+package com.zr.useannotation;
 
 import com.zr.Person;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1244,19 +1244,25 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 从bean后置处理器中为自动装配寻找构造方法，有且仅有一个有参构造或者有且仅有@Autowired注解构造
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		// 以下情况符合其一就可进入
-		// 1 存在可选构造 2 自动装配模型为构造函数自动装配 3 给BeanDefinition中设置了构造参数值 4 有参与构造函数参数列表的参数
+		// 1 存在可选构造
+		// 2 自动装配模型为构造函数自动装配
+		// 3 给BeanDefinition中设置了构造参数值
+		// 4 有参与构造函数参数列表的参数
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
 			return autowireConstructor(beanName, mbd, ctors, args);
 		}
 
 		// Preferred constructors for default construction?
+		// 找出最合适的构造方法
 		ctors = mbd.getPreferredConstructors();
 		if (ctors != null) {
+			// 构造函数自动注入
 			return autowireConstructor(beanName, mbd, ctors, null);
 		}
 
 		// No special handling: simply use no-arg constructor.
+		// 使用默认无参构造函数创建对象，如果没有无参构造且存在多个有参构造且没有@Auwired注解构造，会报错
 		return instantiateBean(beanName, mbd);
 	}
 
@@ -1460,7 +1466,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		boolean needsDepCheck = (mbd.getDependencyCheck() != AbstractBeanDefinition.DEPENDENCY_CHECK_NONE);
 
 		PropertyDescriptor[] filteredPds = null;
-		// 如果工厂拥有InstantiationAwareBeanPostProcessor，那么处理对应的流程，主要是对几个注解的赋值工作包含的两个关键子类是CommonAnnotationBeanPostProcessor, AutowiredAnnoatationBeanPostProcessor
+		// 如果工厂拥有InstantiationAwareBeanPostProcessor，那么处理对应的流程，主要是对几个注解的赋值工作包含的两个关键子类是CommonAnnotationBeanPostProcessor, AutowiredAnnotationBeanPostProcessor
 		if (hasInstAwareBpps) {
 			if (pvs == null) {
 				pvs = mbd.getPropertyValues();

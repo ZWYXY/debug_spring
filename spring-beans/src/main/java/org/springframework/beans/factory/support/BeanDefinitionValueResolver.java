@@ -50,6 +50,10 @@ import org.springframework.util.StringUtils;
  * resolving values contained in bean definition objects
  * into the actual values applied to the target bean instance.
  *
+ * 一个帮助类，被bean factory的实现类所使用
+ * 将bean definition对象中的值，
+ * 分解成实际上的值被应用到target bean实例
+ *
  * <p>Operates on an {@link AbstractBeanFactory} and a plain
  * {@link org.springframework.beans.factory.config.BeanDefinition} object.
  * Used by {@link AbstractAutowireCapableBeanFactory}.

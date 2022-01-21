@@ -1,6 +1,9 @@
-package com.zr.aop;
+package com.zr.aop.xml;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 
 import java.util.Arrays;
 
@@ -14,6 +17,7 @@ import java.util.Arrays;
  * @author zhourui
  * @date 2022/1/18 9:22
  */
+//@Order
 //@Aspect
 //@Component
 public class LogUtil {
@@ -24,8 +28,8 @@ public class LogUtil {
 
 	}
 
-//	@Before(value = "myPointCut()")
-	public void beforeCalculate() {
+//	@Before(value = "myPointCut()", argNames = "result")
+	public void beforeCalculate(JoinPoint joinPoint) {
 		System.err.println("before calculate");
 	}
 
@@ -37,7 +41,9 @@ public class LogUtil {
 //	@Around(value = "myPointCut()", argNames = "joinPoint")
 	public Object aroundCalculate(ProceedingJoinPoint joinPoint) throws Throwable {
 		System.err.println("around calculate1");
-		Object obj = joinPoint.proceed();
+		Object[] args = joinPoint.getArgs();
+		Object obj = joinPoint.proceed(args);
+//		Object obj = joinPoint.proceed();
 		System.err.println("around calculate2");
 		return obj;
 	}

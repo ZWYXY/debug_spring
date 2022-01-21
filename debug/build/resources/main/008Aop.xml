@@ -7,22 +7,33 @@
 	   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 	   ">
 
-	<bean id="logUtil" class="com.zr.aop.LogUtil"/>
+	<bean id="logUtil" class="com.zr.aop.xml.LogUtil"/>
 
-	<bean id="calculator" class="com.zr.aop.use.Calculator"/>
+	<bean id="calculator" class="com.zr.aop.xml.Calculator"/>
 
 	<aop:config>
 		<!-- 引用xmlAspect作为切面 -->
 		<aop:aspect ref="logUtil">
 			<!-- 定义切点 -->
-			<aop:pointcut id="myPointCut" expression="execution(public * com.zr.aop.use..*(..))"/>
+			<aop:pointcut id="myPointCut" expression="execution(public * com.zr.aop.xml..*(..))"/>
 			<!-- 定义通知，引入切点 -->
 			<aop:around method="aroundCalculate" pointcut-ref="myPointCut" arg-names="joinPoint"/>
-			<aop:before method="beforeCalculate" pointcut-ref="myPointCut"/>
+			<aop:before method="beforeCalculate" pointcut-ref="myPointCut" arg-names="joinPoint"/>
 			<aop:after method="afterCalculate" pointcut-ref="myPointCut"/>
 			<aop:after-throwing method="afterThrowingCalculate" pointcut-ref="myPointCut"/>
 			<aop:after-returning method="afterReturningCalculate" pointcut-ref="myPointCut"/>
 		</aop:aspect>
 	</aop:config>
+	<!-- 解释：声明自动为Spring容器中那些配置为@AspectJ切面的bean创建代理
+		proxy-target-class默认false, 表示使用jdk动态代理
+		为true表示可以使用cglib但是并不一定确保能使用cglib，当target没有实现接口时，也会使用cglib
+		详情查看：DefaultAopProxyFactory.createAopProxy()
+
+		expose-proxy="true"
+		这里的exposeProxy是一个可以设置的属性，
+		当在带一个target类方法A中，调用此类中另一个方法B，是不会触发AOP的，所以为了让AOP被触发，所以需要配置expose-proxy属性
+		详情查看CglibAopProxy.getCallbacks方法
+		-->
+	<aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="false"/>
 
 </beans>

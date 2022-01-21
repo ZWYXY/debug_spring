@@ -1,7 +1,9 @@
-package com.zr.aop;
+package com.zr.aop.annotation;
 
-import com.zr.aop.use.Calculator;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.zr.aop.annotation.config.SpringConfig;
+import com.zr.aop.annotation.service.Calculator;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * spring中默认的对象都是单例的，spring会在一级缓存中持有该对象，方便下次直接获取，那么如果是prototype的话，会创建一个新对象
@@ -13,17 +15,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author zhourui
  * @date 2021/12/23 14:51
  */
-public class AopStart {
+public class AopAnnotationStart {
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ac
-				= new ClassPathXmlApplicationContext("008Aop.xml");
+		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
+		// 设置配置类
+		ac.register(SpringConfig.class);
+		ac.refresh();
 
 		Calculator calculator = ac.getBean("calculator", Calculator.class);
-
-		System.err.println(calculator.doAdd(1, 2));
-		System.err.println("--------------------------");
-		System.err.println(calculator.doDivide(1, 0));
+		System.err.println(calculator.doAdd(1, -1));
+//		System.err.println(calculator.doDivide(1, 0));
 	}
 
 }

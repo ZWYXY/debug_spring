@@ -1,13 +1,13 @@
-package com.zr.aop.use;
+package com.zr.aop.annotation.service;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author zhourui
  * @date 2022/1/18 9:36
  */
-//@Component
+@Service
 public class Calculator {
 
 	public int doAdd(int a, int b) {

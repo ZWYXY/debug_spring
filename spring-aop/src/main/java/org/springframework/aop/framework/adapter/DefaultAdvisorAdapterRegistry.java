@@ -47,6 +47,12 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 	 * Create a new DefaultAdvisorAdapterRegistry, registering well-known adapters.
 	 */
 	public DefaultAdvisorAdapterRegistry() {
+		/*
+			这里思考一个问题？我们的通知有 before after afterReturning afterThrowing around 5种，为什么这里只有三个adaptor呢
+			因为其它几种可以使用这三种Adaptor组合起来实现效果，Spring把这件事情交给了MethodInterceptor来做，
+			也就是MethodInterceptor代表了另外几种的组合形式
+
+		 */
 		registerAdvisorAdapter(new MethodBeforeAdviceAdapter());
 		registerAdvisorAdapter(new AfterReturningAdviceAdapter());
 		registerAdvisorAdapter(new ThrowsAdviceAdapter());
@@ -74,15 +80,17 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 		}
 		throw new UnknownAdviceTypeException(advice);
 	}
-
+	// 将Advisor转换为MethodInterceptor
 	@Override
 	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
 		List<MethodInterceptor> interceptors = new ArrayList<>(3);
+		// 从Advisor中获取Advice
 		Advice advice = advisor.getAdvice();
 		if (advice instanceof MethodInterceptor) {
 			interceptors.add((MethodInterceptor) advice);
 		}
 		for (AdvisorAdapter adapter : this.adapters) {
+			// 转换为对应的MethodInterceptor类型
 			if (adapter.supportsAdvice(advice)) {
 				interceptors.add(adapter.getInterceptor(advisor));
 			}

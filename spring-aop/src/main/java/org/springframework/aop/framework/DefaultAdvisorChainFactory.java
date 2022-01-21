@@ -53,19 +53,29 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
+		// 这里用了一个单例模式， 获取DefaultAdvisorAdapterRegistry实例
+		// 在Spring中把每一个功能都分的很细，每个功能都会有相应的类去处理，符合单一职责原则的地方很多
+		// AdvisorAdapterRegistry这个类的主要作用是将Advice适配Advisor 将Advisor适配为对应的MethodInterceptor
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
 		Advisor[] advisors = config.getAdvisors();
+		// 创建一个初始大小为 之前获取到的 通知个数的集合
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
+		// 如果目标类为null的话，则从方法签名中获取目标类
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
+		// 判断目标类是否存在引介增强，通常为false
 		Boolean hasIntroductions = null;
 
+		// 循环目标方法匹配的通知
 		for (Advisor advisor : advisors) {
+			// 如果是PointCutAdvisor类型的实例
 			if (advisor instanceof PointcutAdvisor) {
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
+				// 如果提前进行过切点的匹配或者当前的Advisor适用于目标类
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
+					// 检测advisor是否适用于此目标方法
 					if (mm instanceof IntroductionAwareMethodMatcher) {
 						if (hasIntroductions == null) {
 							hasIntroductions = hasMatchingIntroductions(advisors, actualClass);
@@ -76,10 +86,14 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = mm.matches(method, actualClass);
 					}
 					if (match) {
+						// 拦截器链是通过AdvisorAdapterRegistry来加入的，这个AdvisorAdvisorAdapterRegistry对advice织入具有很大作用
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
+						// 使用MethodMatchers的matches方法进行匹配判断
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
+							// 动态切点则会创建一个InterceptorAndDynamicMethodMatcher对象
+							// 这个对象包含MethodInterceptor和MethodMatcher的实例
 							for (MethodInterceptor interceptor : interceptors) {
 								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
 							}

@@ -273,6 +273,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @PropertySource annotations
+		// 如果配置类上加载了@PropertySource注解，那么就解析加载properties文件，并将属性添加到Spring上下文中
 		for (AnnotationAttributes propertySource : AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
@@ -286,6 +287,8 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @ComponentScan annotations
+		// 处理@ComComponentScan或者ComponentScans注解，并将扫描包下的所有bean转换成填充后的ConfigurationClass
+		// 此处就是将自定义的bean加载到IOC容器，因为扫描到的类也可能添加了@ComponentScan或者@ComponentScans注解，因此需要进行递归解析
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
 		if (!componentScans.isEmpty() &&

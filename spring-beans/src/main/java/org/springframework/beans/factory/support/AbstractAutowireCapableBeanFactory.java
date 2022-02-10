@@ -1438,6 +1438,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+					// postProcessAfterInstantiation：一般用于设置属性
 					if (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) {
 						return;
 					}
@@ -1448,11 +1449,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// 如果mdb有PropertyValues就获取其PropertyValues
 		PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null);
 
+		// 获取mbd的 自动装配模式
 		int resolvedAutowireMode = mbd.getResolvedAutowireMode();
+		// 如果 自动装配模式为按名称自动装配bean属性 或者按类型自动装配bean属性
 		if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) {
+			// MutablePropertyValues: PropertyValues接口默认实现。允许对属性进行简单操作，并提供构造函数来支持从映射 进行深度复制和构造
 			MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
 			// Add property values based on autowire by name if applicable.
+			// 根据autowire的名称（如适用）添加属性值
 			if (resolvedAutowireMode == AUTOWIRE_BY_NAME) {
+				// 通过bw的PropertyDescriptor属性名，查找出对应的Bean对象，将其添加到newPvs中
 				autowireByName(beanName, mbd, bw, newPvs);
 			}
 			// Add property values based on autowire by type if applicable.
@@ -1474,12 +1480,22 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
+					// postProcessProperties:在工厂将给定的属性值引用到给定bean之前，对它们进行后处理，不需要任何属性扫描符。该回调方法会在未来的版本会被删掉
+					// 取而代之的是 postProcessPropertyValues回调方法
+					// 让ibp对pvs增加对bw的Bean对象的propertyValue 或编辑pvs的propertyValue
 					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
 					if (pvsToUse == null) {
 						if (filteredPds == null) {
+							// mbd.allowCaching:是否被允许缓存，默认是允许的。缓存除了可以提高效率以外，还可以在保证并发的情况下，返回的PropertyDescriptor[]是同一份
+							// 从bw提取一组经过筛选的PropertyDescriptor,排除忽略的依赖项或忽略项上定义的属性
 							filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
 						}
+						// postProcessPropertyValues:一般进行检查是否所有依赖项都满足，例如基于“Require”注释在bean属性 setter
+						// --替换要应用的属性值，通常是通过基于原始的PropertyValues创建一个新的MutablePropertyValue实例，添加或删除特定的值
+						// --返回的PropertyValues 将应用于bw包装的bean实例的实际属性值（添加PropertyValues实例到pvs或者设置为null以跳过属性值填充）
+						// 回到ipd的postProcessPropertyValues方法
 						pvsToUse = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
+						// 如果pvsToUser为null，将终止该方法，以跳过属性填充
 						if (pvsToUse == null) {
 							return;
 						}

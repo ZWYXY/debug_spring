@@ -1,6 +1,6 @@
 package com.zr;
 
-import com.zr.custompropertyeditor.Customer;
+import com.zr.custompropertyeditor.pojo.Customer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

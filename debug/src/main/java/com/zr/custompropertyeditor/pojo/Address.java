@@ -1,4 +1,4 @@
-package com.zr.custompropertyeditor;
+package com.zr.custompropertyeditor.pojo;
 
 /**
  * @author zhourui

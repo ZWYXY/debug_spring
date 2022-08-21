@@ -1,5 +1,6 @@
 package com.zr.custompropertyeditor;
 
+import com.zr.custompropertyeditor.pojo.Address;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.PropertyEditorRegistry;
 

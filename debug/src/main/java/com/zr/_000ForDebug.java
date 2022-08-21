@@ -2,6 +2,8 @@ package com.zr;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Arrays;
+
 /**
  * spring中默认的对象都是单例的，spring会在一级缓存中持有该对象，方便下次直接获取，那么如果是prototype的话，会创建一个新对象
  * 如果想在单例模式的bean下引用一个原型模式的bean怎么办？
@@ -17,7 +19,8 @@ public class _000ForDebug {
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext classPathXmlApplicationContext
 				= new ClassPathXmlApplicationContext("000ApplicationContext.xml");
-
+		Arrays.stream(System.getProperty("java.class.path").split(";")).forEach(System.err::println);
+		System.err.println(System.getProperty("user.dir"));
 	}
 
 }

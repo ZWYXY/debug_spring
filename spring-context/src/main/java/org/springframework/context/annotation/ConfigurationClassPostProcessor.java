@@ -262,16 +262,16 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	/**
 	 *
 	 * 构建和验证一个类是否被@Configuration修饰，并作相关的解析工作
-	 *
+	 * <p>
 	 * 如果对此方法了解清楚了，那么springboot的自动装配就了解清楚了
-	 *
+	 * <p>
 	 * Build and validate a configuration model based on the registry of
 	 * {@link Configuration} classes.
 	 */
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
 		// 创建存放BeanDefinitionHolder的对象集合
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
-		// 当前registry就是defaultListableBeanFactory
+		// 当前registry就是DefaultListableBeanFactory
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
 		// 遍历所有要处理的beanDefinition名称，筛选对应的BeanDefinition（被注解修饰的）
@@ -310,11 +310,15 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		SingletonBeanRegistry sbr = null;
 		if (registry instanceof SingletonBeanRegistry) {
 			sbr = (SingletonBeanRegistry) registry;
+			// 是否有自定义的beanName生成器
 			if (!this.localBeanNameGeneratorSet) {
+				// 获取自定义的beanName生成器
 				BeanNameGenerator generator = (BeanNameGenerator) sbr.getSingleton(
 						AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR);
 				if (generator != null) {
+					// 设置组件扫描的beanName生成策略
 					this.componentScanBeanNameGenerator = generator;
+					// 设置import bean name 生成策略
 					this.importBeanNameGenerator = generator;
 				}
 			}
@@ -325,16 +329,21 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 
 		// Parse each @Configuration class
+		// 初始化ConfigurationClassParser类，并初始化相关参数
 		ConfigurationClassParser parser = new ConfigurationClassParser(
 				this.metadataReaderFactory, this.problemReporter, this.environment,
 				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
 
+		// candidates用于将之前加入的configCandidates去重
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+		// 判断是否已经处理过了
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
+			// 解析带有@Controller @Import @ImportResource @ComponentScan @ComponentScans @Bean的BeanDefinition
 			parser.parse(candidates);
 			parser.validate();
 
+			// 移除掉已经解析的配置类
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 			configClasses.removeAll(alreadyParsed);
 

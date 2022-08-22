@@ -80,7 +80,8 @@ final class PostProcessorRegistrationDelegate {
 			// 存放BeanDefinitionRegistryPostProcessor的集合
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 
-			// 首先处理入参中的beanFactoryPostProcessors,遍历所有的beanFactoryPostProcessor，将BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor区分开
+			// 首先处理入参中的beanFactoryPostProcessors，遍历所有的beanFactoryPostProcessor，这些都是用户自己加入的BeanFactoryPostProcessor
+			// 请注意将BeanDefinitionRegistryPostProcessor和BeanFactoryPostProcessor区分开
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
 				// 是BeanDefinitionRegistryPostProcessor
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {

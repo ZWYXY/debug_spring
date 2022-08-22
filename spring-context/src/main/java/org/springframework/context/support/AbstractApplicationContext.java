@@ -494,6 +494,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * to the internal BeanFactory.
 	 */
 	public List<BeanFactoryPostProcessor> getBeanFactoryPostProcessors() {
+		// 用户可以通过super.beanFactoryPostProcessors(); 增加自己实现的BeanFactoryPostProcessor
+		// 或者向Spring容器中添加BeanFactoryPostProcessor，实现增加自己的BeanFactoryPostProcessor
 		return this.beanFactoryPostProcessors;
 	}
 
